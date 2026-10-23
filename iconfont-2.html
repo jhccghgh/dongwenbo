@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>纹样馆：线稿厅</title>
+<script src="cdn/lucide/lucide.min.js"></script>
+<style>
+  :root {
+    --wy-blue: #002FA7;
+    --wy-paper: #FBFAF6;
+    --wy-lemon: #F5C400;
+    --wy-ink: #000;
+    --wy-font: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--wy-font);
+    background: var(--wy-paper);
+    color: var(--wy-ink);
+    line-height: 1.7;
+  }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--wy-lemon); outline-offset: 3px; }
+
+  /* ===== 顶部导航 ===== */
+  .wy_top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px clamp(20px, 5vw, 72px);
+    background: var(--wy-paper);
+  }
+  .wy_brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
+  }
+  .wy_mark {
+    width: 40px;
+    height: 40px;
+    background: var(--wy-lemon);
+    display: grid;
+    place-items: center;
+  }
+  .wy_mark svg { width: 22px; height: 22px; }
+  .wy_nav { display: flex; gap: clamp(16px, 3vw, 40px); }
+  .wy_nav a {
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+  }
+  .wy_nav a:hover { border-bottom-color: var(--wy-blue); }
+  .wy_nav a[aria-current="page"] { border-bottom-color: var(--wy-ink); font-weight: 700; }
+
+  /* ===== 首屏（纸白展墙式） ===== */
+  .wy_hero {
+    background: var(--wy-paper);
+    padding: clamp(56px, 10vw, 130px) clamp(20px, 5vw, 72px);
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: clamp(24px, 5vw, 80px);
+    align-items: center;
+  }
+  .wy_heroTitle {
+    font-size: clamp(3rem, 8.5vw, 7rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+  }
+  .wy_heroText {
+    margin-top: 28px;
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+    max-width: 34em;
+  }
+  .wy_heroNote { margin-top: 18px; font-size: 0.9rem; color: var(--wy-blue); }
+  .wy_heroPiece { text-align: center; color: var(--wy-blue); }
+  .wy_heroPiece svg {
+    width: clamp(9rem, 22vw, 19rem);
+    height: clamp(9rem, 22vw, 19rem);
+    stroke-width: 1;
+  }
+  .wy_heroCap { margin-top: 24px; font-size: 0.95rem; color: var(--wy-ink); }
+  .wy_heroCap span { display: block; color: var(--wy-blue); }
+
+  /* ===== 试作台（钴蓝场，回应铅字厅首屏） ===== */
+  .wy_bench {
+    background: var(--wy-blue);
+    color: var(--wy-paper);
+    padding: clamp(48px, 8vw, 110px) clamp(20px, 5vw, 72px);
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) 1fr;
+    gap: clamp(28px, 5vw, 80px);
+    align-items: center;
+  }
+  .wy_benchTitle {
+    font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  .wy_benchText { margin-top: 18px; max-width: 30em; font-size: 1rem; }
+  .wy_benchText em { font-style: normal; color: var(--wy-lemon); }
+  .wy_benchStageBox {
+    background: var(--wy-paper);
+    border: none;
+    display: grid;
+    place-items: center;
+    padding: clamp(28px, 4vw, 56px);
+  }
+  .wy_benchStage { color: var(--wy-blue); line-height: 0; }
+  .wy_controls { margin-top: 32px; }
+  .wy_ctrl { margin-top: 22px; }
+  .wy_ctrl label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+  .wy_ctrl output { color: var(--wy-lemon); font-weight: 700; }
+  .wy_slider {
+    width: 100%;
+    accent-color: var(--wy-lemon);
+    height: 28px;
+  }
+  .wy_swatches { display: flex; gap: 14px; margin-top: 26px; align-items: center; }
+  .wy_swatches b { font-size: 0.95rem; font-weight: 700; margin-right: 4px; }
+  .wy_swatch {
+    width: 34px;
+    height: 34px;
+    border: 2px solid var(--wy-paper);
+    cursor: pointer;
+    padding: 0;
+  }
+  .wy_swatch[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--wy-lemon); }
+  .wy_sBlue { background: var(--wy-blue); }
+  .wy_sInk { background: var(--wy-ink); }
+  .wy_sLemon { background: var(--wy-lemon); }
+
+  /* ===== 展墙 ===== */
+  .wy_wall { padding: clamp(48px, 8vw, 110px) clamp(20px, 5vw, 72px); }
+  .wy_wall h2 {
+    font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  .wy_wallNote { margin: 10px 0 40px; font-size: 0.95rem; color: #333; }
+  .wy_gallery {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 150px;
+    grid-auto-flow: dense;
+    gap: 14px;
+  }
+  .wy_piece {
+    border: 1.5px solid var(--wy-ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 12px;
+    transition: background-color .25s ease, color .25s ease;
+  }
+  .wy_piece:hover { background: var(--wy-blue); color: var(--wy-paper); }
+  .wy_piece svg { width: 44px; height: 44px; }
+  .wy_tag { font-size: 0.85rem; text-align: center; opacity: .78; }
+  .wy_piece--xl { grid-column: span 2; grid-row: span 2; }
+  .wy_piece--xl svg { width: 96px; height: 96px; }
+  .wy_piece--wide { grid-column: span 2; }
+  .wy_piece--wide svg { width: 58px; height: 58px; }
+  .wy_piece--tall { grid-row: span 2; }
+  .wy_piece--tall svg { width: 64px; height: 64px; }
+
+  /* ===== 原理区（行式 specimen） ===== */
+  .wy_principle { padding: 0 clamp(20px, 5vw, 72px) clamp(56px, 9vw, 120px); }
+  .wy_principle h2 {
+    font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  .wy_principle dl { margin-top: 40px; }
+  .wy_principle dt {
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding-top: 28px;
+    border-top: 1.5px solid var(--wy-ink);
+  }
+  .wy_principle dd { margin-top: 20px; padding-bottom: 8px; }
+  .wy_principle dd p { max-width: 46em; font-size: 0.95rem; color: #333; }
+  .wy_sizeRow { display: flex; align-items: center; gap: 36px; flex-wrap: wrap; color: var(--wy-ink); }
+  .wy_sizeRow svg:nth-child(1) { width: 20px; height: 20px; }
+  .wy_sizeRow svg:nth-child(2) { width: 48px; height: 48px; }
+  .wy_sizeRow svg:nth-child(3) { width: 96px; height: 96px; }
+  .wy_colorRow { display: flex; align-items: center; gap: 36px; flex-wrap: wrap; }
+  .wy_colorRow .wy_cInk { color: var(--wy-ink); }
+  .wy_colorRow .wy_cBlue { color: var(--wy-blue); }
+  .wy_colorRow .wy_cLemon { color: var(--wy-lemon); }
+  .wy_colorRow svg { width: 56px; height: 56px; }
+  .wy_strokeRow { display: flex; align-items: center; gap: 48px; flex-wrap: wrap; color: var(--wy-ink); }
+  .wy_strokeRow svg { width: 72px; height: 72px; }
+
+  /* ===== 页脚 ===== */
+  .wy_foot {
+    background: var(--wy-blue);
+    color: var(--wy-paper);
+    padding: clamp(40px, 6vw, 72px) clamp(20px, 5vw, 72px);
+  }
+  .wy_footNav { display: flex; gap: clamp(20px, 4vw, 56px); flex-wrap: wrap; }
+  .wy_footNav a {
+    color: var(--wy-paper);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.05rem;
+    border-bottom: 2px solid var(--wy-lemon);
+    padding-bottom: 3px;
+  }
+  .wy_footNav a:hover { color: var(--wy-lemon); }
+  .wy_colophon { margin-top: 28px; font-size: 0.85rem; opacity: .8; }
+
+  /* ===== 响应式与偏好 ===== */
+  @media (max-width: 860px) {
+    .wy_hero, .wy_bench { grid-template-columns: 1fr; }
+    .wy_heroPiece { text-align: left; }
+    .wy_gallery { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 120px; }
+  }
+  @media (max-width: 480px) {
+    .wy_gallery { grid-template-columns: repeat(2, 1fr); }
+    .wy_piece--xl { grid-column: span 2; grid-row: span 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wy_piece { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="wy_top">
+  <a class="wy_brand" href="index.html">
+    <span class="wy_mark"><i data-lucide="house"></i></span>
+    <span>纹样馆</span>
+  </a>
+  <nav class="wy_nav">
+    <a href="index.html">首页</a>
+    <a href="iconfont-1.html">铅字厅</a>
+    <a href="iconfont-2.html" aria-current="page">线稿厅</a>
+  </nav>
+</header>
+
+<section class="wy_hero">
+  <div>
+    <h1 class="wy_heroTitle">线稿不撒谎</h1>
+    <p class="wy_heroText">线稿厅展出 Lucide 的 SVG 图标。它不是字，而是一段一段手写感十足的矢量路径：颜色交给 currentColor，粗细交给描边，放大到海报尺寸，边缘依然干净。</p>
+    <p class="wy_heroNote">所有展品由本地脚本 lucide.min.js 绘制，未加载任何字体文件。</p>
+  </div>
+  <figure class="wy_heroPiece">
+    <i data-lucide="compass"></i>
+    <figcaption class="wy_heroCap">compass<span>24 × 24 网格</span></figcaption>
+  </figure>
+</section>
+
+<section class="wy_bench">
+  <div>
+    <h2 class="wy_benchTitle">试作台</h2>
+    <p class="wy_benchText">这是字体图标做不到的事：拖动滑杆，<em>直接改写 SVG 的描边宽度与画布尺寸</em>，或换一种颜色看看 currentColor 如何接管一切。</p>
+    <div class="wy_controls">
+      <div class="wy_ctrl">
+        <label for="wy_strokeRange">描边宽度 <output id="wy_strokeVal">2</output></label>
+        <input type="range" class="wy_slider" id="wy_strokeRange" min="1" max="3" step="0.25" value="2">
+      </div>
+      <div class="wy_ctrl">
+        <label for="wy_sizeRange">画布尺寸 <output id="wy_sizeVal">160</output></label>
+        <input type="range" class="wy_slider" id="wy_sizeRange" min="48" max="320" step="8" value="160">
+      </div>
+      <div class="wy_swatches" id="wy_swatches">
+        <b>线色</b>
+        <button type="button" class="wy_swatch wy_sBlue" data-wy-color="#002FA7" aria-pressed="true" aria-label="钴蓝"></button>
+        <button type="button" class="wy_swatch wy_sInk" data-wy-color="#000000" aria-pressed="false" aria-label="墨黑"></button>
+        <button type="button" class="wy_swatch wy_sLemon" data-wy-color="#B8860B" aria-pressed="false" aria-label="藤黄"></button>
+      </div>
+    </div>
+  </div>
+  <div class="wy_benchStageBox">
+    <div class="wy_benchStage" id="wy_benchStage">
+      <i data-lucide="aperture"></i>
+    </div>
+  </div>
+</section>
+
+<main class="wy_wall">
+  <h2>展墙</h2>
+  <p class="wy_wallNote">同一批展位，换一种笔迹。悬停展品，看线稿反转为蓝底白线。</p>
+  <ul class="wy_gallery">
+    <li class="wy_piece wy_piece--xl"><i data-lucide="palette"></i><span class="wy_tag">palette</span></li>
+    <li class="wy_piece wy_piece--tall"><i data-lucide="pen-tool"></i><span class="wy_tag">pen-tool</span></li>
+    <li class="wy_piece"><i data-lucide="camera"></i><span class="wy_tag">camera</span></li>
+    <li class="wy_piece"><i data-lucide="music"></i><span class="wy_tag">music</span></li>
+    <li class="wy_piece"><i data-lucide="lightbulb"></i><span class="wy_tag">lightbulb</span></li>
+    <li class="wy_piece wy_piece--wide"><i data-lucide="layers"></i><span class="wy_tag">layers</span></li>
+    <li class="wy_piece"><i data-lucide="gem"></i><span class="wy_tag">gem</span></li>
+    <li class="wy_piece"><i data-lucide="feather"></i><span class="wy_tag">feather</span></li>
+    <li class="wy_piece"><i data-lucide="scissors"></i><span class="wy_tag">scissors</span></li>
+    <li class="wy_piece wy_piece--xl"><i data-lucide="aperture"></i><span class="wy_tag">aperture</span></li>
+    <li class="wy_piece"><i data-lucide="ruler"></i><span class="wy_tag">ruler</span></li>
+    <li class="wy_piece"><i data-lucide="eraser"></i><span class="wy_tag">eraser</span></li>
+    <li class="wy_piece"><i data-lucide="brush"></i><span class="wy_tag">brush</span></li>
+    <li class="wy_piece wy_piece--tall"><i data-lucide="image"></i><span class="wy_tag">image</span></li>
+    <li class="wy_piece wy_piece--wide"><i data-lucide="bookmark"></i><span class="wy_tag">bookmark</span></li>
+    <li class="wy_piece"><i data-lucide="house"></i><span class="wy_tag">house</span></li>
+  </ul>
+</main>
+
+<section class="wy_principle">
+  <h2>线稿原理</h2>
+  <dl>
+    <dt>矢量无级缩放</dt>
+    <dd>
+      <div class="wy_sizeRow">
+        <i data-lucide="feather"></i>
+        <i data-lucide="feather"></i>
+        <i data-lucide="feather"></i>
+      </div>
+      <p>同一份路径数据，20 / 48 / 96 像素三种画布。路径只记坐标，不记像素。</p>
+    </dd>
+    <dt>currentColor 接管颜色</dt>
+    <dd>
+      <div class="wy_colorRow">
+        <i data-lucide="pen-tool" class="wy_cInk"></i>
+        <i data-lucide="pen-tool" class="wy_cBlue"></i>
+        <i data-lucide="pen-tool" class="wy_cLemon"></i>
+      </div>
+      <p>描边色写死为 currentColor，所以颜色跟随文字颜色属性，与所在环境同呼吸。</p>
+    </dd>
+    <dt>描边是可调参数</dt>
+    <dd>
+      <div class="wy_strokeRow">
+        <i data-lucide="gem" stroke-width="1"></i>
+        <i data-lucide="gem" stroke-width="2.5"></i>
+      </div>
+      <p>同一枚图形，描边宽度 1 与 2.5。字体图标的"笔画"是铸死的，SVG 的笔画只是一行属性。</p>
+    </dd>
+  </dl>
+</section>
+
+<footer class="wy_foot">
+  <nav class="wy_footNav">
+    <a href="index.html">返回首页</a>
+    <a href="iconfont-1.html">前往铅字厅</a>
+  </nav>
+  <p class="wy_colophon">线稿厅：Lucide 0.454.0 脚本已本地化到 cdn/lucide 目录。</p>
+</footer>
+
+<script>
+  lucide.createIcons();
+
+  var wy_stage = document.getElementById('wy_benchStage');
+  var wy_strokeRange = document.getElementById('wy_strokeRange');
+  var wy_sizeRange = document.getElementById('wy_sizeRange');
+  var wy_strokeVal = document.getElementById('wy_strokeVal');
+  var wy_sizeVal = document.getElementById('wy_sizeVal');
+  var wy_swatches = document.getElementById('wy_swatches');
+  var wy_color = '#002FA7';
+
+  function wy_apply() {
+    var wy_svg = wy_stage.querySelector('svg');
+    if (!wy_svg) return;
+    var wy_s = parseFloat(wy_strokeRange.value);
+    var wy_w = parseInt(wy_sizeRange.value, 10);
+    wy_svg.setAttribute('stroke-width', wy_s);
+    wy_svg.setAttribute('width', wy_w);
+    wy_svg.setAttribute('height', wy_w);
+    wy_svg.style.color = wy_color;
+    wy_strokeVal.textContent = wy_s;
+    wy_sizeVal.textContent = wy_w;
+  }
+
+  wy_strokeRange.addEventListener('input', wy_apply);
+  wy_sizeRange.addEventListener('input', wy_apply);
+  wy_swatches.addEventListener('click', function (e) {
+    var wy_btn = e.target.closest('.wy_swatch');
+    if (!wy_btn) return;
+    wy_color = wy_btn.getAttribute('data-wy-color');
+    wy_swatches.querySelectorAll('.wy_swatch').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b === wy_btn));
+    });
+    wy_apply();
+  });
+
+  wy_apply();
+</script>
+
+</body>
+</html>

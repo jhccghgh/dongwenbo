@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>纹样馆：铅字厅</title>
+<link rel="stylesheet" href="cdn/fontawesome/css/all.min.css">
+<style>
+  :root {
+    --wy-blue: #002FA7;
+    --wy-paper: #FBFAF6;
+    --wy-lemon: #F5C400;
+    --wy-ink: #000;
+    --wy-font: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--wy-font);
+    background: var(--wy-paper);
+    color: var(--wy-ink);
+    line-height: 1.7;
+  }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--wy-lemon); outline-offset: 3px; }
+
+  /* ===== 顶部导航 ===== */
+  .wy_top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px clamp(20px, 5vw, 72px);
+    background: var(--wy-paper);
+  }
+  .wy_brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
+  }
+  .wy_mark {
+    width: 40px;
+    height: 40px;
+    background: var(--wy-lemon);
+    display: grid;
+    place-items: center;
+    font-size: 1.125rem;
+  }
+  .wy_nav { display: flex; gap: clamp(16px, 3vw, 40px); }
+  .wy_nav a {
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+  }
+  .wy_nav a:hover { border-bottom-color: var(--wy-blue); }
+  .wy_nav a[aria-current="page"] { border-bottom-color: var(--wy-ink); font-weight: 700; }
+
+  /* ===== 首屏色域海报 ===== */
+  .wy_hero {
+    background: var(--wy-blue);
+    color: var(--wy-paper);
+    padding: clamp(56px, 10vw, 130px) clamp(20px, 5vw, 72px);
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: clamp(24px, 5vw, 80px);
+    align-items: center;
+  }
+  .wy_heroTitle {
+    font-size: clamp(3rem, 8.5vw, 7rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+  }
+  .wy_heroText {
+    margin-top: 28px;
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+    max-width: 34em;
+    color: var(--wy-paper);
+  }
+  .wy_heroNote {
+    margin-top: 18px;
+    font-size: 0.9rem;
+    color: var(--wy-lemon);
+  }
+  .wy_heroPiece { text-align: center; }
+  .wy_heroPiece i {
+    font-size: clamp(9rem, 22vw, 19rem);
+    line-height: 1;
+    display: block;
+  }
+  .wy_heroCap {
+    margin-top: 24px;
+    font-size: 0.95rem;
+  }
+  .wy_heroCap span { display: block; color: var(--wy-lemon); }
+
+  /* ===== 展墙（沙龙式混排） ===== */
+  .wy_wall { padding: clamp(48px, 8vw, 110px) clamp(20px, 5vw, 72px); }
+  .wy_wall h2, .wy_principle h2 {
+    font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  .wy_wallNote { margin: 10px 0 40px; font-size: 0.95rem; color: #333; }
+  .wy_gallery {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 150px;
+    grid-auto-flow: dense;
+    gap: 14px;
+  }
+  .wy_piece {
+    border: 1.5px solid var(--wy-ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 12px;
+    transition: background-color .25s ease, color .25s ease;
+  }
+  .wy_piece:hover { background: var(--wy-blue); color: var(--wy-paper); }
+  .wy_piece i { font-size: 2.4rem; line-height: 1; }
+  .wy_tag { font-size: 0.85rem; text-align: center; opacity: .78; }
+  .wy_tag span { display: block; font-size: 0.78rem; }
+  .wy_piece--xl { grid-column: span 2; grid-row: span 2; }
+  .wy_piece--xl i { font-size: 5.2rem; }
+  .wy_piece--wide { grid-column: span 2; }
+  .wy_piece--wide i { font-size: 3.2rem; }
+  .wy_piece--tall { grid-row: span 2; }
+  .wy_piece--tall i { font-size: 3.6rem; }
+
+  /* ===== 字体原理区（行式 specimen） ===== */
+  .wy_principle {
+    padding: 0 clamp(20px, 5vw, 72px) clamp(56px, 9vw, 120px);
+  }
+  .wy_principle dl { margin-top: 40px; }
+  .wy_principle dt {
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding-top: 28px;
+    border-top: 1.5px solid var(--wy-ink);
+  }
+  .wy_principle dd { margin-top: 20px; padding-bottom: 8px; }
+  .wy_principle dd p { max-width: 46em; font-size: 0.95rem; color: #333; }
+  .wy_sizeRow { display: flex; align-items: baseline; gap: 36px; flex-wrap: wrap; }
+  .wy_sizeRow i:first-child { font-size: 1.25rem; }
+  .wy_sizeRow i:nth-child(2) { font-size: 2.75rem; }
+  .wy_sizeRow i:nth-child(3) { font-size: 5.5rem; }
+  .wy_colorRow { display: flex; align-items: center; gap: 36px; flex-wrap: wrap; }
+  .wy_colorRow .wy_cInk { color: var(--wy-ink); font-size: 2.6rem; }
+  .wy_colorRow .wy_cBlue { color: var(--wy-blue); font-size: 2.6rem; }
+  .wy_colorRow .wy_cLemon { color: var(--wy-lemon); font-size: 5rem; }
+  .wy_inlineDemo { font-size: 1.15rem; max-width: 40em; }
+  .wy_inlineDemo i { margin: 0 6px; color: var(--wy-blue); }
+
+  /* ===== 页脚 ===== */
+  .wy_foot {
+    background: var(--wy-blue);
+    color: var(--wy-paper);
+    padding: clamp(40px, 6vw, 72px) clamp(20px, 5vw, 72px);
+  }
+  .wy_footNav { display: flex; gap: clamp(20px, 4vw, 56px); flex-wrap: wrap; }
+  .wy_footNav a {
+    color: var(--wy-paper);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.05rem;
+    border-bottom: 2px solid var(--wy-lemon);
+    padding-bottom: 3px;
+  }
+  .wy_footNav a:hover { color: var(--wy-lemon); }
+  .wy_colophon { margin-top: 28px; font-size: 0.85rem; opacity: .8; }
+
+  /* ===== 响应式与偏好 ===== */
+  @media (max-width: 860px) {
+    .wy_hero { grid-template-columns: 1fr; }
+    .wy_heroPiece { text-align: left; }
+    .wy_gallery { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 120px; }
+  }
+  @media (max-width: 480px) {
+    .wy_gallery { grid-template-columns: repeat(2, 1fr); }
+    .wy_piece--xl { grid-column: span 2; grid-row: span 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wy_piece { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="wy_top">
+  <a class="wy_brand" href="index.html">
+    <span class="wy_mark"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
+    <span>纹样馆</span>
+  </a>
+  <nav class="wy_nav">
+    <a href="index.html">首页</a>
+    <a href="iconfont-1.html" aria-current="page">铅字厅</a>
+    <a href="iconfont-2.html">线稿厅</a>
+  </nav>
+</header>
+
+<section class="wy_hero">
+  <div>
+    <h1 class="wy_heroTitle">图标即铅字</h1>
+    <p class="wy_heroText">铅字厅展出 Font Awesome 的字体图标。每一枚图标都是字库里的一个字形：给文字属性，它就跟着变——字号随 font-size，颜色随 color，像排字工人手里最听话的一枚活字。</p>
+    <p class="wy_heroNote">本厅展品均以字体方式渲染，全部文件已本地化至 cdn 目录。</p>
+  </div>
+  <figure class="wy_heroPiece">
+    <i class="fa-solid fa-house" aria-hidden="true"></i>
+    <figcaption class="wy_heroCap">fa-house<span>U+F015</span></figcaption>
+  </figure>
+</section>
+
+<main class="wy_wall">
+  <h2>展墙</h2>
+  <p class="wy_wallNote">展品大小不一，如沙龙式挂法。悬停任意展品，可看到它的名字与码点。</p>
+  <ul class="wy_gallery">
+    <li class="wy_piece wy_piece--xl"><i class="fa-solid fa-palette" aria-hidden="true"></i><span class="wy_tag">fa-palette<span>U+F53F</span></span></li>
+    <li class="wy_piece wy_piece--tall"><i class="fa-solid fa-pen-nib" aria-hidden="true"></i><span class="wy_tag">fa-pen-nib<span>U+F1AD</span></span></li>
+    <li class="wy_piece"><i class="fa-solid fa-camera" aria-hidden="true"></i><span class="wy_tag">fa-camera<span>U+F03D</span></span></li>
+    <li class="wy_piece"><i class="fa-solid fa-music" aria-hidden="true"></i><span class="wy_tag">fa-music<span>U+F001</span></span></li>
+    <li class="wy_piece"><i class="fa-solid fa-bolt" aria-hidden="true"></i><span class="wy_tag">fa-bolt<span>U+F0E7</span></span></li>
+    <li class="wy_piece wy_piece--wide"><i class="fa-solid fa-gear" aria-hidden="true"></i><span class="wy_tag">fa-gear<span>U+F013</span></span></li>
+    <li class="wy_piece"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span class="wy_tag">fa-envelope<span>U+F0E0</span></span></li>
+    <li class="wy_piece"><i class="fa-solid fa-star" aria-hidden="true"></i><span class="wy_tag">fa-star<span>U+F005</span></span></li>
+    <li class="wy_piece"><i class="fa-solid fa-heart" aria-hidden="true"></i><span class="wy_tag">fa-heart<span>U+F004</span></span></li>
+    <li class="wy_piece wy_piece--xl"><i class="fa-solid fa-compass" aria-hidden="true"></i><span class="wy_tag">fa-compass<span>U+F14E</span></span></li>
+    <li class="wy_piece"><i class="fa-solid fa-bookmark" aria-hidden="true"></i><span class="wy_tag">fa-bookmark<span>U+F02E</span></span></li>
+    <li class="wy_piece"><i class="fa-solid fa-fire" aria-hidden="true"></i><span class="wy_tag">fa-fire<span>U+F06D</span></span></li>
+    <li class="wy_piece"><i class="fa-solid fa-moon" aria-hidden="true"></i><span class="wy_tag">fa-moon<span>U+F186</span></span></li>
+    <li class="wy_piece wy_piece--tall"><i class="fa-solid fa-feather" aria-hidden="true"></i><span class="wy_tag">fa-feather<span>U+F52B</span></span></li>
+    <li class="wy_piece wy_piece--wide"><i class="fa-solid fa-image" aria-hidden="true"></i><span class="wy_tag">fa-image<span>U+F03E</span></span></li>
+    <li class="wy_piece"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i><span class="wy_tag">fa-lightbulb<span>U+F0EB</span></span></li>
+  </ul>
+</main>
+
+<section class="wy_principle">
+  <h2>字体原理</h2>
+  <dl>
+    <dt>随字号缩放，无需重绘</dt>
+    <dd>
+      <div class="wy_sizeRow">
+        <i class="fa-solid fa-star" aria-hidden="true"></i>
+        <i class="fa-solid fa-star" aria-hidden="true"></i>
+        <i class="fa-solid fa-star" aria-hidden="true"></i>
+      </div>
+      <p>同一枚字形，只改 font-size（1.25 / 2.75 / 5.5rem）。它本来就是字，放多大都不会糊。</p>
+    </dd>
+    <dt>随文字颜色而变</dt>
+    <dd>
+      <div class="wy_colorRow">
+        <i class="fa-solid fa-bolt wy_cInk" aria-hidden="true"></i>
+        <i class="fa-solid fa-bolt wy_cBlue" aria-hidden="true"></i>
+        <i class="fa-solid fa-bolt wy_cLemon" aria-hidden="true"></i>
+      </div>
+      <p>图标的颜色完全继承 CSS 的 color 属性，与正文文字同源同变。</p>
+    </dd>
+    <dt>能排进句子里</dt>
+    <dd>
+      <p class="wy_inlineDemo">在排字工人眼里，图标 <i class="fa-solid fa-house" aria-hidden="true"></i> 与文字 <i class="fa-solid fa-pen-nib" aria-hidden="true"></i> 没有身份差别，都按基线排队，都能被选中、复制。</p>
+    </dd>
+  </dl>
+</section>
+
+<footer class="wy_foot">
+  <nav class="wy_footNav">
+    <a href="index.html">返回首页</a>
+    <a href="iconfont-2.html">前往线稿厅</a>
+  </nav>
+  <p class="wy_colophon">铅字厅：Font Awesome 6.5.2 字体文件已本地化到 cdn/fontawesome 目录。</p>
+</footer>
+
+</body>
+</html>

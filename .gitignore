@@ -1,0 +1,14 @@
+# 敏感信息
+.gitee_token
+project-submit.json
+
+# 嵌套 git 仓库（独立克隆，未并入主仓库）
+/dwb/webprojectdongwenbo/
+/webprojectdongwenbo/
+
+# 工具缓存与临时文件
+.trae-html-share-packages/
+Thumbs.db
+.DS_Store
+*.log
+node_modules/
