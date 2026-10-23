@@ -21,9 +21,9 @@ description: 提交项目 skill：将当前工作目录（上课代码 e:\16953\
 5. `git commit -m "<中文简述，说明本次改动目的>"`。
 6. 配置远端：
    - `git remote add origin https://gitee.com/neusoft_wangyao_jsj/dwb00211.git`（已存在则跳过）；
-   - 推送认证：`git remote set-url --push origin "https://neusoft_wangyao_jsj:<令牌>@gitee.com/neusoft_wangyao_jsj/dwb00211.git"`。令牌保存在 `.git/config` 中，不会进入版本库。
+   - 推送认证：`git remote set-url --push origin "https://oauth2:<令牌>@gitee.com/neusoft_wangyao_jsj/dwb00211.git"`。**必须用 `oauth2` 作为用户名**（用仓库所有者用户名会报 "The token username invalid"）。令牌保存在 `.git/config` 中，不会进入版本库。
 7. `git push -u origin master`。
-8. 推送成功后用 `git status` 确认工作区干净；若远端有新提交导致被拒，先 `git pull --rebase origin master` 再推。
+8. 推送成功后用 `git status` 确认工作区干净；若远端有新提交导致被拒（fetch first），先 `git pull --rebase origin master` 再推。
 
 ## 安全注意
 
