@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<!-- 作者：董文博 | 建立时间：2026-11-04 | 使用大模型：GLM-5.3-Flash | 功能：旅游投诉选项卡组件（课堂测试9，一比一还原设计图，js 外部引用） -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅游投诉</title>
+    <style>
+        /* 全局样式：宋体、白色背景，还原设计图中的紧凑排版 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 40px 0;
+            background: #fff;
+            font-family: SimSun, "宋体", serif;
+            font-size: 12px;
+            color: #000;
+        }
+
+        .dwb_back {
+            display: block;
+            width: 262px;
+            margin: 0 auto 12px;
+            color: #06c;
+        }
+
+        /* 选项卡整体容器：与设计图一致的窄栏宽度 */
+        .dwb_tabs {
+            width: 262px;
+            margin: 0 auto;
+        }
+
+        /* 选项卡导航行：三个等宽选项卡 */
+        .dwb_tab_nav {
+            display: flex;
+            list-style: none;
+        }
+
+        .dwb_tab_item {
+            flex: 1;
+            padding: 5px 0;
+            border: 1px solid #808080;
+            margin-left: -1px;
+            background: #fff;
+            color: #000;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .dwb_tab_item:first-child {
+            margin-left: 0;
+        }
+
+        .dwb_tab_item:hover {
+            color: #c00;
+        }
+
+        /* 选中状态：红底白字，还原设计图中的红色高亮选项卡 */
+        .dwb_tab_item.dwb_active {
+            border-color: #c00;
+            background: #c00;
+            color: #fff;
+        }
+
+        /* 内容面板：默认隐藏，选中时显示 */
+        .dwb_tab_panel {
+            display: none;
+            padding: 10px 6px 6px;
+            list-style: none;
+        }
+
+        .dwb_tab_panel.dwb_active {
+            display: block;
+        }
+
+        /* 新闻列表项：黑色方块符 + 12px 宋体，行距紧凑 */
+        .dwb_tab_panel li {
+            padding: 2px 0;
+            line-height: 19px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .dwb_tab_panel li::before {
+            content: "\25A0";
+            margin-right: 5px;
+            font-size: 9px;
+            vertical-align: 1px;
+        }
+
+        /* 最新投诉面板第一条：设计图中为红色重点条目 */
+        .dwb_first_news {
+            color: #c00;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <a class="dwb_back" href="../index.html">返回首页</a>
+
+    <div class="dwb_tabs" id="dwb_tourTabs">
+        <!-- 选项卡导航：最新投诉为默认选中 -->
+        <ul class="dwb_tab_nav">
+            <li class="dwb_tab_item dwb_active">最新投诉</li>
+            <li class="dwb_tab_item">官方回应</li>
+            <li class="dwb_tab_item">追踪调查</li>
+        </ul>
+
+        <!-- 面板一：最新投诉 -->
+        <ul class="dwb_tab_panel dwb_active">
+            <li class="dwb_first_news">北京火车站出租车乱调查 司机称计价器坏</li>
+            <li>公园仙人掌遭刻字"毁容" 一棵仙人掌被刻</li>
+            <li>昆明再现游客"辣手摧鸥" 网友曝照(组图)</li>
+            <li>四川一星级公园斥资1年未开放变"菜地"</li>
+            <li>北京北海地坛公园暗藏高端会所 园方称"喝</li>
+            <li>北京北海金鳌玉蝀牌匾英文字母"签名"被破坏</li>
+            <li>北京动物园售票玩猫腻 低价门票遭"雪藏"</li>
+            <li>女子不满"无购物"投诉旅行社 称东西一样没</li>
+            <li>老年人组团游权益受损 旅行社称牺牲老年人</li>
+        </ul>
+
+        <!-- 面板二：官方回应 -->
+        <ul class="dwb_tab_panel">
+            <li>大熊猫、遛屐鸭成热词 法官解读"山寨鸭"是</li>
+            <li>国家旅游局回应涨价："团队游价格系正常</li>
+            <li>国家旅游局回应"新旅游法实施后旅行团团</li>
+            <li>出游遇纠纷可依《旅游法》维权 明确旅游投</li>
+            <li>解决新旅游法"谣传" 扫货族可安心</li>
+            <li>《旅游法》将抑制"零负团费"和"门票经</li>
+            <li>文旅部将纳入旅行社行为指南和公约协作</li>
+            <li>天津二季度旅行社服务质量公布 投诉涉及8</li>
+            <li>敦煌：国家法定节假日所有景点景区免票停</li>
+        </ul>
+
+        <!-- 面板三：追踪调查 -->
+        <ul class="dwb_tab_panel">
+            <li>《旅游法》实施半月 自费景区违规一日游</li>
+            <li>迪庆香格里拉旅游"怪象"：进导游等自己</li>
+            <li>导游挣钱潜规则：逃离旅行社自己干</li>
+            <li>九寨沟为何变成"死胡同"？——数千游客</li>
+            <li>九寨沟为何仍现游客滞留？</li>
+            <li>旅游之尴尬：展"将"新博物馆 女士超性恐进</li>
+            <li>记者暗访兵马俑景区：玉器店买玉 过期门票</li>
+            <li>假冒导游游客借卡转帐 两女子忽悠女大学生</li>
+            <li>39家旅游单位违法被罚1800万 购物店结盟绕</li>
+        </ul>
+    </div>
+
+    <!-- 外部引用 js 文件夹中的选项卡脚本 -->
+    <script src="js/test-9.js"></script>
+</body>
+</html>
