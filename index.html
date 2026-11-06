@@ -1,0 +1,632 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="董文博的高级网页设计课堂实践目录">
+    <title>高级网页设计 · 课堂实践</title>
+    <style>
+        :root {
+            --ink: #17212b;
+            --muted: #66727d;
+            --paper: #f6f3ed;
+            --white: #fffdf8;
+            --line: #ddd8ce;
+            --teal: #1e6865;
+            --teal-light: #dcefed;
+            --coral: #d9684f;
+            --yellow: #f1c75b;
+            --shadow: 0 18px 45px rgba(40, 48, 53, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: var(--paper);
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1.6;
+        }
+
+        body::before {
+            position: fixed;
+            z-index: -1;
+            inset: 0;
+            content: "";
+            opacity: 0.55;
+            background-image: linear-gradient(rgba(30, 104, 101, 0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 104, 101, 0.045) 1px, transparent 1px);
+            background-size: 34px 34px;
+            pointer-events: none;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .shell {
+            width: min(1120px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 28px 0;
+            color: var(--teal);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
+        .brand-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-mark::before {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            content: "";
+            background: var(--coral);
+            transform: rotate(45deg);
+        }
+
+        .topbar span:last-child {
+            color: var(--muted);
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: clamp(52px, 9vw, 104px) clamp(28px, 7vw, 88px);
+            border-radius: 4px;
+            background: var(--teal);
+            box-shadow: var(--shadow);
+        }
+
+        .hero::after {
+            position: absolute;
+            right: 7%;
+            bottom: -90px;
+            width: 240px;
+            height: 240px;
+            border: 1px solid rgba(255, 253, 248, 0.25);
+            border-radius: 50%;
+            content: "";
+            box-shadow: 0 0 0 28px rgba(255, 253, 248, 0.06), 0 0 0 56px rgba(255, 253, 248, 0.04);
+        }
+
+        .eyebrow {
+            margin: 0 0 18px;
+            color: var(--yellow);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        h1,
+        h2,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            max-width: 680px;
+            margin-bottom: 22px;
+            color: var(--white);
+            font-family: Georgia, "Noto Serif SC", serif;
+            font-size: clamp(38px, 7vw, 76px);
+            font-weight: 400;
+            line-height: 1.08;
+            letter-spacing: 0;
+        }
+
+        .hero-intro {
+            max-width: 600px;
+            margin-bottom: 0;
+            color: rgba(255, 253, 248, 0.8);
+            font-size: 17px;
+        }
+
+        .content {
+            padding: 72px 0 84px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 25px;
+        }
+
+        .section-heading h2 {
+            margin-bottom: 0;
+            font-family: Georgia, "Noto Serif SC", serif;
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 400;
+        }
+
+        .section-heading p {
+            max-width: 380px;
+            margin-bottom: 4px;
+            color: var(--muted);
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .course-card {
+            display: flex;
+            min-height: 250px;
+            flex-direction: column;
+            padding: 26px;
+            border: 1px solid var(--line);
+            background: rgba(255, 253, 248, 0.78);
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+        }
+
+        .course-card:hover {
+            border-color: var(--teal);
+            box-shadow: var(--shadow);
+            transform: translateY(-5px);
+        }
+
+        .card-number {
+            display: block;
+            margin-bottom: 34px;
+            color: var(--coral);
+            font-family: Georgia, serif;
+            font-size: 28px;
+        }
+
+        .course-card h3 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .course-card p {
+            margin-bottom: 24px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            width: fit-content;
+            margin-top: auto;
+            color: var(--teal);
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .card-link::after {
+            content: "↗";
+            font-size: 18px;
+            transition: transform 180ms ease;
+        }
+
+        .card-link:hover::after {
+            transform: translate(3px, -3px);
+        }
+
+        .pending {
+            border-style: dashed;
+            background: rgba(255, 253, 248, 0.42);
+        }
+
+        .pending .card-number {
+            color: var(--teal);
+        }
+
+        .object-lab {
+            margin-top: 72px;
+            padding: 30px;
+            border-top: 3px solid var(--teal);
+            background: var(--white);
+        }
+
+        .object-lab .section-heading {
+            margin-bottom: 22px;
+        }
+
+        .object-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .object-panel {
+            padding: 22px;
+            border: 1px solid var(--line);
+            background: var(--paper);
+        }
+
+        .object-panel h3 {
+            margin: 0 0 16px;
+            font-size: 17px;
+        }
+
+        .property-list {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 8px 18px;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .property-list dt {
+            color: var(--muted);
+        }
+
+        .property-list dd {
+            margin: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .object-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-bottom: 16px;
+        }
+
+        .object-actions button {
+            min-height: 40px;
+            padding: 8px 12px;
+            border: 1px solid var(--teal);
+            color: var(--teal);
+            background: var(--white);
+            font: inherit;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .object-actions button:hover,
+        .object-actions button:focus-visible {
+            color: var(--white);
+            background: var(--teal);
+        }
+
+        .object-output {
+            min-height: 102px;
+            margin: 0;
+            padding: 12px;
+            overflow-wrap: anywhere;
+            color: var(--white);
+            background: var(--ink);
+            font: 13px/1.7 Consolas, monospace;
+            white-space: pre-wrap;
+        }
+
+        .object-link {
+            display: inline-block;
+            margin-top: 18px;
+            color: var(--teal);
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 4px;
+        }
+
+        .prompt {
+            display: grid;
+            grid-template-columns: 0.8fr 2fr;
+            gap: 32px;
+            margin-top: 72px;
+            padding: 32px;
+            border-top: 3px solid var(--coral);
+            background: var(--white);
+        }
+
+        .prompt h2 {
+            margin-bottom: 0;
+            font-family: Georgia, "Noto Serif SC", serif;
+            font-size: 26px;
+            font-weight: 400;
+        }
+
+        .prompt p {
+            margin-bottom: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        footer {
+            padding: 24px 0 36px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 760px) {
+            .shell {
+                width: min(100% - 28px, 560px);
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 7px;
+            }
+
+            .topbar span:last-child {
+                font-size: 12px;
+            }
+
+            .course-grid,
+            .prompt,
+            .object-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .section-heading {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 9px;
+            }
+
+            .section-heading p {
+                margin-bottom: 0;
+                text-align: left;
+            }
+
+            .content {
+                padding-top: 52px;
+            }
+
+            .prompt {
+                gap: 18px;
+                margin-top: 52px;
+                padding: 24px;
+            }
+
+            .object-lab {
+                margin-top: 52px;
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="shell topbar">
+        <div class="brand-mark">DWB / CLASSROOM PRACTICE</div>
+        <span>高级网页设计 · 课堂目录</span>
+    </header>
+
+    <main class="shell">
+        <section class="hero" aria-labelledby="page-title">
+            <p class="eyebrow">董文博的学习档案 · 2026</p>
+            <h1 id="page-title">高级网页设计<br>课堂实践</h1>
+            <p class="hero-intro">从布局、图标到交互，把每一次课堂练习整理成可以浏览、可以回看的网页作品集。</p>
+        </section>
+
+        <section class="content" aria-labelledby="directory-title">
+            <div class="section-heading">
+                <h2 id="directory-title">课堂目录</h2>
+                <p>已完成的模块可以直接进入，正在生长的内容会在这里继续留下位置。</p>
+            </div>
+
+            <div class="course-grid">
+                <article class="course-card">
+                    <span class="card-number">01</span>
+                    <h3>Flex 复习</h3>
+                    <p>导航、三等分布局、响应式卡片网格与侧边栏布局练习。</p>
+                    <a class="card-link" href="classroom/9.2.html">查看实践页面</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">02</span>
+                    <h3>字体图标</h3>
+                    <p>本地字体图标资源与图标演示页面，探索图形化表达。</p>
+                    <a class="card-link" href="classroom/font/demo_index.html">查看字体图标</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">03</span>
+                    <h3>SVG 图标</h3>
+                    <p>使用 SVG 构建可切换的图标导航，练习基础交互状态。</p>
+                    <a class="card-link" href="classroom/svg005.html">查看 SVG 实践</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">04</span>
+                    <h3>JavaScript 对象</h3>
+                    <p>认识对象的属性、方法、遍历，以及引用赋值的特点。</p>
+                    <a class="card-link" href="classroom/opject.html">查看对象示例</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">05</span>
+                    <h3>JavaScript 函数</h3>
+                    <p>通过随机数猜谜游戏，练习函数定义、参数传递与条件判断。</p>
+                    <a class="card-link" href="classroom/fandtion005.html">开始猜数字</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">06</span>
+                    <h3>数据类型和运算符</h3>
+                    <p>认识 JavaScript 的基本数据类型与常用运算符。</p>
+                    <a class="card-link" href="classroom/dataType.html">查看数据类型</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">07</span>
+                    <h3>JS 内部对象</h3>
+                    <p>练习内部对象常用方法的调用与使用场景。</p>
+                    <a class="card-link" href="classroom/function005.html">查看内部对象</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">08</span>
+                    <h3>对象的应用</h3>
+                    <p>通过 apply 等方式实践对象方法的调用与应用。</p>
+                    <a class="card-link" href="classroom/js_boj.apply.html">查看对象应用</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">09</span>
+                    <h3>事件的冒泡与捕获</h3>
+                    <p>演示 DOM 事件流中冒泡与捕获阶段的触发顺序。</p>
+                    <a class="card-link" href="classroom/llll.html">查看事件演示</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">10</span>
+                    <h3>抓小球小游戏</h3>
+                    <p>综合运用交互与逻辑判断实现的趣味小游戏。</p>
+                    <a class="card-link" href="classroom/game.html">开始游戏</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">11</span>
+                    <h3>字体图标 · 铅字厅</h3>
+                    <p>使用 Font Awesome 字体图标构建艺术品牌风格页面。</p>
+                    <a class="card-link" href="iconfont-1.html">查看字体图标页</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">12</span>
+                    <h3>SVG 图标 · 线稿厅</h3>
+                    <p>使用 Lucide 矢量图标绘制同风格的品牌页面。</p>
+                    <a class="card-link" href="iconfont-2.html">查看矢量图标页</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">13</span>
+                    <h3>移动端导航 · 字体版</h3>
+                    <p>自适应宽度的固定底部导航，含数字徽章与红点提示。</p>
+                    <a class="card-link" href="iconfont-3.html">查看移动端页面</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">14</span>
+                    <h3>移动端导航 · 矢量版</h3>
+                    <p>以 SVG 图标实现的同款移动端底部导航练习。</p>
+                    <a class="card-link" href="iconfont-4.html">查看移动端页面</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">15</span>
+                    <h3>新闻选项卡</h3>
+                    <p>可复用的 tab 选项卡组件，切换四类新闻内容。</p>
+                    <a class="card-link" href="tab-1.html">查看选项卡</a>
+                </article>
+
+                <article class="course-card">
+                    <span class="card-number">16</span>
+                    <h3>Swiper 轮播</h3>
+                    <p>大国重器光影展：拖动、圆点与箭头、自动播放，以及六种切换效果。</p>
+                    <a class="card-link" href="swiper-task.html">查看轮播任务</a>
+                </article>
+
+                <article class="course-card pending">
+                    <span class="card-number">17</span>
+                    <h3>后续模块</h3>
+                    <p>更多课堂实践正在整理中，新的页面将在这里持续加入。</p>
+                    <span class="card-link">即将增加</span>
+                </article>
+            </div>
+
+            <section class="object-lab" aria-labelledby="object-title">
+                <div class="section-heading">
+                    <h2 id="object-title">JavaScript 对象</h2>
+                    <p>对象由属性和方法组成。试试操作学生对象，观察属性变化与引用关系。</p>
+                </div>
+
+                <div class="object-layout">
+                    <div class="object-panel">
+                        <h3>student 对象</h3>
+                        <dl class="property-list" id="student-properties" aria-live="polite"></dl>
+                    </div>
+                    <div class="object-panel">
+                        <h3>对象操作</h3>
+                        <div class="object-actions">
+                            <button type="button" id="study-action">调用 study()</button>
+                            <button type="button" id="delete-action">删除 sleep 方法</button>
+                            <button type="button" id="alias-action">通过别名改名</button>
+                        </div>
+                        <pre class="object-output" id="object-output" aria-live="polite">点击按钮查看对象操作结果。</pre>
+                    </div>
+                </div>
+                <a class="object-link" href="classroom/opject.html">打开完整对象示例</a>
+            </section>
+
+            <aside class="prompt" aria-labelledby="prompt-title">
+                <h2 id="prompt-title">本次提示词</h2>
+                <p>创建一个新页面，包括本目录下的所有网页的超链接，使用原生代码，不使用 CDN，新页面名称为 index.html，主题为董文博的《高级网页设计》课堂实践，美化页面，课堂目录中包含 flex 复习、字体图标、其余模块后续在增加。页面中包括本提示词。</p>
+            </aside>
+        </section>
+    </main>
+
+    <footer class="shell">董文博 · 高级网页设计 · 课堂实践目录</footer>
+    <script>
+        const student = {
+            name: "张三",
+            age: 18,
+            sex: "男",
+            class: "高三一班",
+            hobby: ["看电影", "足球", "看书"],
+            study() {
+                return "学习";
+            },
+            sleep() {
+                return "睡觉";
+            }
+        };
+        const studentAlias = student;
+        const properties = document.querySelector("#student-properties");
+        const output = document.querySelector("#object-output");
+
+        function renderStudent() {
+            properties.replaceChildren();
+            for (const key in student) {
+                const name = document.createElement("dt");
+                const value = document.createElement("dd");
+                name.textContent = key;
+                value.textContent = typeof student[key] === "function"
+                    ? "方法"
+                    : Array.isArray(student[key]) ? student[key].join("、") : student[key];
+                properties.append(name, value);
+            }
+        }
+
+        document.querySelector("#study-action").addEventListener("click", () => {
+            output.textContent = `student.study() -> ${student.study()}`;
+        });
+        document.querySelector("#delete-action").addEventListener("click", () => {
+            delete student.sleep;
+            renderStudent();
+            output.textContent = `delete student.sleep\n"sleep" in student -> ${"sleep" in student}`;
+        });
+        document.querySelector("#alias-action").addEventListener("click", () => {
+            studentAlias.name = studentAlias.name === "张三" ? "王五" : "张三";
+            renderStudent();
+            output.textContent = `studentAlias.name -> ${studentAlias.name}\nstudent.name -> ${student.name}\n两个变量指向同一个对象。`;
+        });
+
+        renderStudent();
+    </script>
+</body>
+
+</html>

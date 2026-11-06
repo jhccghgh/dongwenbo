@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抓小球小游戏</title>
+    <style>
+        /* ========== 全局 ========== */
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background-color: #FFF9C4;
+            color: #333;
+        }
+
+        /* ========== 顶部信息栏 ========== */
+        #header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 48px;
+            padding: 0 24px;
+            background: #2C3E50;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 20;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        #header .title {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        #header .stats {
+            font-size: 16px;
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+        #header .stats .label { opacity: 0.8; }
+        #header .stats .value { font-weight: bold; margin-left: 4px; }
+        #timer.warning { color: #FF5252; }
+
+        /* ========== 点击空白闪屏 ========== */
+        body.flash {
+            background-color: #FFCDD2;
+            transition: background-color 0.15s;
+        }
+
+        /* ========== 小球 ========== */
+        .ball {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: radial-gradient(circle at 30% 30%, #90CAF9, #1976D2);
+            box-shadow:
+                0 0 12px rgba(25, 118, 210, 0.55),
+                inset -6px -6px 12px rgba(0, 0, 0, 0.25),
+                inset 4px 4px 8px rgba(255, 255, 255, 0.35);
+            transform: scale(1);
+            opacity: 1;
+            transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+            will-change: transform, opacity;
+            z-index: 5;
+        }
+        .ball.spawning {
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .ball.dying {
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ========== 开始按钮（空闲态居中） ========== */
+        #startBtn {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 18px 48px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background: #1976D2;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(25, 118, 210, 0.4);
+            transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+            z-index: 15;
+        }
+        #startBtn:hover {
+            background: #1565C0;
+            box-shadow: 0 8px 22px rgba(25, 118, 210, 0.55);
+        }
+        #startBtn:active {
+            transform: translate(-50%, -50%) scale(0.97);
+        }
+        #startBtn.hidden { display: none; }
+
+        /* ========== 结束遮罩 ========== */
+        #gameOver {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 30;
+            animation: fadeIn 0.3s;
+        }
+        #gameOver.show { display: flex; }
+        #gameOver .card {
+            background: #FFFFFF;
+            border-radius: 18px;
+            padding: 40px 48px;
+            text-align: center;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+            min-width: 320px;
+            animation: popIn 0.3s ease-out;
+        }
+        #gameOver .card h2 {
+            margin: 0 0 12px;
+            font-size: 28px;
+            color: #2C3E50;
+        }
+        #gameOver .card .final-score {
+            font-size: 44px;
+            font-weight: bold;
+            color: #1976D2;
+            margin: 10px 0 24px;
+        }
+        #gameOver .card button {
+            padding: 14px 36px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background: #1976D2;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(25,118,210,0.4);
+            transition: background 0.15s, transform 0.1s;
+        }
+        #gameOver .card button:hover { background: #1565C0; }
+        #gameOver .card button:active { transform: scale(0.97); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部信息栏 -->
+    <div id="header">
+        <div class="title">🎯 抓小球小游戏</div>
+        <div class="stats">
+            <div><span class="label">当前分数：</span><span id="score" class="value">0</span></div>
+            <div><span class="label">剩余时间：</span><span id="timer" class="value">02:00</span></div>
+        </div>
+    </div>
+
+    <!-- 开始按钮（空闲态可见） -->
+    <button id="startBtn">🎮 开始游戏</button>
+
+    <!-- 结束遮罩 -->
+    <div id="gameOver">
+        <div class="card">
+            <h2>⏰ 时间到！</h2>
+            <div>最终得分</div>
+            <div id="finalScore" class="final-score">0</div>
+            <button id="restartBtn">🔄 再来一局</button>
+        </div>
+    </div>
+
+<script>
+    // ========== 游戏状态 ==========
+    const game = {
+        score: 0,
+        timeLeft: 120,          // 2 分钟 = 120 秒
+        playing: false,
+        timerId: null,
+        ballSize: 50,
+        headerH: 48,
+        ballEl: null,           // 当前小球 DOM
+    };
+
+    // ========== DOM 快捷引用 ==========
+    const $score     = document.getElementById('score');
+    const $timer     = document.getElementById('timer');
+    const $startBtn  = document.getElementById('startBtn');
+    const $gameOver  = document.getElementById('gameOver');
+    const $finalScore= document.getElementById('finalScore');
+    const $restartBtn= document.getElementById('restartBtn');
+
+    // ========== 工具函数 ==========
+    function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function updateScore() {
+        $score.textContent = game.score;
+    }
+
+    function updateTimer() {
+        $timer.textContent = pad2(Math.floor(game.timeLeft / 60)) + ':' + pad2(game.timeLeft % 60);
+        if (game.timeLeft <= 10) {
+            $timer.classList.add('warning');
+        } else {
+            $timer.classList.remove('warning');
+        }
+    }
+
+    function flashScreen() {
+        document.body.classList.add('flash');
+        setTimeout(() => document.body.classList.remove('flash'), 200);
+    }
+
+    function randomPosition() {
+        const maxX = window.innerWidth  - game.ballSize;
+        const maxY = window.innerHeight - game.headerH - game.ballSize;
+        return {
+            x: Math.max(0, Math.floor(Math.random() * maxX)),
+            y: Math.max(0, Math.floor(Math.random() * maxY)) + game.headerH
+        };
+    }
+
+    // ========== 小球生命周期 ==========
+    function removeBallDOM() {
+        if (game.ballEl) {
+            game.ballEl.remove();
+            game.ballEl = null;
+        }
+    }
+
+    // 创建小球 DOM 并绑定事件（供 spawnBall / hitAndRespawn 共用）
+    function createBallDOM() {
+        const pos = randomPosition();
+        const ball = document.createElement('div');
+        ball.className = 'ball spawning';   // 先缩放为 0，做生成动画
+        ball.style.left = pos.x + 'px';
+        ball.style.top  = pos.y + 'px';
+        document.body.appendChild(ball);
+
+        // 下一帧移除 spawning → 触发 0→1 过渡
+        requestAnimationFrame(() => {
+            ball.classList.remove('spawning');
+        });
+
+        // ⚠️ 关键：stopPropagation 防止冒泡到 body 触发扣分
+        ball.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (!game.playing || ball.classList.contains('dying')) return;
+            game.score += 2;
+            updateScore();
+            hitAndRespawn();
+        });
+
+        return ball;
+    }
+
+    function spawnBall() {
+        removeBallDOM();
+        game.ballEl = createBallDOM();
+    }
+
+    function hitAndRespawn() {
+        if (!game.ballEl) return;
+        // 1) 旧球：独立播放死亡动画，200ms 后异步移除（不阻塞新球生成）
+        const oldBall = game.ballEl;
+        oldBall.classList.add('dying');
+        game.ballEl = null;
+        setTimeout(() => oldBall.remove(), 200);
+
+        // 2) 新球：立即在新位置生成 → 玩家无死区、不会被误扣 1 分
+        if (game.playing) {
+            game.ballEl = createBallDOM();
+        }
+    }
+
+    // ========== 游戏流程 ==========
+    function startGame() {
+        game.score = 0;
+        game.timeLeft = 120;
+        game.playing = true;
+
+        updateScore();
+        updateTimer();
+        $startBtn.classList.add('hidden');
+        $gameOver.classList.remove('show');
+
+        spawnBall();
+
+        // 启动倒计时
+        game.timerId = setInterval(() => {
+            game.timeLeft--;
+            updateTimer();
+            if (game.timeLeft <= 0) {
+                endGame();
+            }
+        }, 1000);
+    }
+
+    function endGame() {
+        game.playing = false;
+        if (game.timerId) {
+            clearInterval(game.timerId);
+            game.timerId = null;
+        }
+        removeBallDOM();
+        $finalScore.textContent = game.score;
+        $gameOver.classList.add('show');
+    }
+
+    // ========== 事件绑定 ==========
+
+    // 开始按钮 & 再来一局 —— 必须 stopPropagation，避免触发 body 点空扣分
+    $startBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        startGame();
+    });
+    $restartBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        startGame();
+    });
+
+    // body 点空扣分 —— 需排除 header / startBtn / gameOver 内部的点击
+    document.body.addEventListener('click', function(e) {
+        if (!game.playing) return;
+        // 点击的元素属于 header / startBtn / gameOver / 小球 → 跳过
+        if (e.target.closest('#header') ||
+            e.target.closest('#startBtn') ||
+            e.target.closest('#gameOver') ||
+            e.target.closest('.ball')) return;
+
+        game.score -= 1;
+        flashScreen();
+        updateScore();
+    });
+
+    // header 自己也要 stopPropagation（保险）
+    document.getElementById('header').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+</script>
+
+</body>
+</html>
