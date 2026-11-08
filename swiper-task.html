@@ -152,6 +152,7 @@
             <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919大飞机"><div class="wy-cap"><h3>C919 大飞机</h3><p>让中国人的大飞机梦照进现实</p></div></div>
             <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者号"><div class="wy-cap"><h3>奋斗者号</h3><p>坐底万米 · 深海探测进入"中国时代"</p></div></div>
             <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="中国天眼"><div class="wy-cap"><h3>中国天眼 FAST</h3><p>南仁东先生 22 年铸就的观天巨目</p></div></div>
+            <div class="swiper-slide"><img src="swiper-imgs/aida_1.jpg" alt="爱达·魔都号"><div class="wy-cap"><h3>爱达·魔都号</h3><p>2024 年 1 月首航 · 国产首艘大型邮轮（图片由 AI 生成）</p></div></div>
           </div>
           <div class="swiper-pagination" id="wyPag2"></div>
           <div class="swiper-button-prev" id="wyPrev2"></div>
@@ -210,6 +211,7 @@
       <button data-fx="coverflow">coverflow 画廊堆叠（沉浸）</button>
       <button data-fx="flip">flip 翻页（复古）</button>
       <button data-fx="cards">cards 卡片（俏皮）</button>
+      <button data-fx="creative">creative 电影（超纲·挑战）</button>
     </div>
     <div class="wy-demo">
       <span class="wy-demo-tag">🎛️ 演示四 · 效果实验台（点按钮切换 effect）</span>
@@ -223,12 +225,14 @@
             <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="中国天眼"><div class="wy-cap"><h3>中国天眼 FAST</h3><p>相册页面爱用 coverflow</p></div></div>
           </div>
           <div class="swiper-pagination" id="wyPag4"></div>
+          <div class="swiper-button-prev" id="wyPrev4"></div>
+          <div class="swiper-button-next" id="wyNext4"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="wy-back"><a href="dwb/webprojectdongwenbo/24002120307董文博/index.html">← 返回课堂实践中心</a>　<a href="swiper-lesson.html">查看教师讲解版 →</a></div>
+  <div class="wy-back"><a href="dwb/webprojectdongwenbo/24002120307董文博/index.html">← 返回课堂实践中心</a>　<a href="swiper-prompts.html">📄 提示词与答辩记录入口 →</a></div>
 
   <footer>Swiper 课堂操作任务 · 大国重器光影展（学生版） · 高级网页设计 · 2026-2027-1</footer>
 </div>
@@ -247,6 +251,9 @@ var wySw1 = new Swiper('#wySw1', {});
 var wySw2 = new Swiper('#wySw2', {
     speed: 600,
     loop: true,
+    keyboard: {
+      enabled: true,                 // 超纲自学（任务三）：keyboard 键盘控制， focus 页面后按 ←/→ 方向键即可翻页
+    },
     pagination: {
       el: '#wyPag2',
       clickable: true,
@@ -275,53 +282,62 @@ var wySw3 = new Swiper("#wySw3", {
 
 
 
-  // ── 任务 4：初始化 #wySw4，循环 + 3.2 秒自动播放 + 圆点 + 初始 effect ──
-  // TODO: 在这里写你的代码
+  // ── 任务 4：初始化 #wySw4（任务一：AI 提示词迭代产出的最终配置）──
+  // 无缝循环 loop + 3.2 秒自动翻页且手动操作后不停止 + 圆点可点击 + 初始效果 cube
+  // 作者：董文博 | 时间：2026-11-06 | 配置来源：任务一提示词第 2 轮 AI 输出
 var wySw4 = new Swiper("#wySw4", {
+      effect: "cube",                  // 初始效果为 cube（3D 立方体）
+      speed: 800,
+      loop: true,                      // 无缝循环
       autoplay: {
-        delay: 3200,
-        disableOnInteraction: false,
+        delay: 3200,                   // 3.2 秒自动翻页
+        disableOnInteraction: false,   // 手动操作后自动播放不停止
       },
       pagination: {
         el: "#wyPag4",
-        clickable: true,
+        clickable: true,               // 圆点分页器可点击跳转
+      },
+      navigation: {
+        nextEl: "#wyNext4",
+        prevEl: "#wyPrev4",
       },
     });
 
-  // ── 任务 4 进阶：补全按钮点击事件，实现六种效果实时切换 ──
-  // 提示 1：动态换 effect 只改参数是无效的，必须销毁旧实例再重建（destroy + new）
-  // 提示 2：按钮上已有 data-fx 属性，用 btn.dataset.fx 读取要切换的效果名
+  // ── 任务 4 进阶 + 任务二：效果实时切换（销毁旧实例再重建）──
+  // 函数：wyBuild4Config —— 根据效果名生成 wySw4 的初始化配置；
+  //       当效果为 creative（电影选片）时追加 creativeEffect 参数：
+  //       上一张向左移出并带旋转角度，下一张从右侧放大进场，像电影选片海报墙
+  // 作者：董文博 | 时间：2026-11-06
+  function wyBuild4Config(fx){
+    var wyCfg = {
+      effect: fx,
+      speed: 800,
+      loop: true,
+      autoplay: { delay: 3200, disableOnInteraction: false },
+      pagination: { el: "#wyPag4", clickable: true },
+      navigation: { nextEl: "#wyNext4", prevEl: "#wyPrev4" }
+    };
+    if (fx === "creative") {
+      wyCfg.creativeEffect = {
+        prev: { translate: ["-115%", 0, -220], rotate: [-18, 0, 0] },  // 上一张：缩小左移并带 18° 倾斜
+        next: { translate: ["105%", 0, 0], scale: 1.15 },              // 下一张：从右侧放大进场
+        limitProgress: 2
+      };
+    }
+    return wyCfg;
+  }
+
+  // 每个效果按钮绑定点击：先清除所有按钮选中状态，再设置当前按钮选中，
+  // 然后销毁旧 wySw4 实例（true,true 连样式与监听一起清理），最后按新效果重建
   document.querySelectorAll('.wy-fx button').forEach(function(btn){
     btn.addEventListener('click', function(){
-      // TODO 1：先给当前按钮加 wy-on 类、其余按钮去掉 wy-on（高亮当前按钮）
       document.querySelectorAll('.wy-fx button').forEach(function(b){
-        b.classList.remove('wy-on');      // 全部按钮先去掉高亮
+        b.classList.remove('wy-on');      // 先清除所有按钮的高亮
       });
-      btn.classList.add('wy-on');         // 再给当前按钮加高亮
+      btn.classList.add('wy-on');         // 再设置当前按钮高亮
 
-      // TODO 2：销毁旧的 wySw4 实例（true, true 表示连实例样式和事件监听一起清理，恢复原始骨架）
-      wySw4.destroy(true, true);
-
-      // TODO 3：用新 effect 重建实例（把其它配置原样保留）
-      wySw4 = new Swiper("#wySw4", {
-        effect: btn.dataset.fx,           // 读取按钮 data-fx 属性里存的效果名
-        speed: 800,
-        loop: true,
-        autoplay: {
-          delay: 3200,
-          disableOnInteraction: false,
-        },
-        pagination: {
-          el: "#wyPag4",
-          clickable: true,
-        },
-      });
-    });
-  });
-</script>
-</body>
-</html>
-
+      wySw4.destroy(true, true);          // 销毁旧实例，恢复原始骨架
+      wySw4 = new Swiper("#wySw4", wyBuild4Config(btn.dataset.fx));  // 用新 effect 重建
     });
   });
 </script>
