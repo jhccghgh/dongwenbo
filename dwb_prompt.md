@@ -169,3 +169,9 @@
 > 任务一·提示词工程师：不写代码写提示词，让 AI 生成 new Swiper('#wySw4', {...}) 配置：①无缝循环 ②3.2秒自动翻页且手动操作后不停止 ③圆点分页器可点击 ④初始效果 cube；至少迭代2轮，保留每轮提示词与AI回答，粘进页面验证并截图
 > 任务二·creative 仿写：仿官方示例 257-effect-creative，给演示页加第7个按钮【creative 电影】：上一张缩左移带角度，下一张放大右移进场，实现 prev/next 按钮
 > 任务三·综合创作：光影频道加第六件展品爱达·魔都号（AI 生成横版16:9图片，slide结构完整），再加一个未讲过的 Swiper 能力（keyboard/mousewheel/zoom/parallax 任选其一）；提交物含与 AI 的关键对话记录；给提示词留访问入口
+
+## 2026-11-11 14:30:00 | GLM-5.3-Flash
+
+提示词：flip翻页、cards卡片、creative电影效果有大部分空白，请修复，并在index.html页面中加入dwb_prompt.md 页面入口
+
+执行说明：定位到切换效果时 destroy(true,true) 不清理 cube 动态插入的 .swiper-cube-shadow 节点及遗留内联样式，污染新实例布局（容器被撑到 760px 高、slide 仅 290px，下方大面积空白）。修复：①切换前回填原始 slide 模板并清除容器/包装层内联样式、清空旧圆点；②CSS 锁定 #wySw4 高度 290px 并裁剪溢出。7 种效果实测高度均稳定 290px；index.html 新增第 18 张卡片提示词日志入口指向 dwb_prompt.md，后续模块顺延为 19。
