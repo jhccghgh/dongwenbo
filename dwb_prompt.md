@@ -229,3 +229,9 @@
 提示词：把未加入 index.html 的 html 全部加入 index；在 index.html 中加入未加入的 html，并把这条规则写入 AGENTS.md：每次创建新的 html 时写入 index。
 
 执行说明：根目录 index.html 补入 poems.html、mobile-gesture.html、mobile-zoom.html、mobile-sensor.html（编号 19~22，占位卡顺延 23）；课堂首页 index.html 补入 swiper-prompts.html、dwb_prompt.md 及上述四个页面（编号 17~22，占位卡顺延 23）；AGENTS.md 新增"新页面必须登记首页目录"规则。
+
+## 2026-11-18 17:20:00 | GLM-5.3-Flash
+
+提示词：把任务3.MP4加入到mobile-zoom.html底部，任务4.MP4加入到mobile-sensor.html底部。
+
+执行说明：在 mobile-zoom.html 与 mobile-sensor.html 页面底部各加一个视频区块（video 标签，controls 控件，居中排版，dwb_ 前缀），分别引用根目录的 任务3.mp4、任务4.mp4，并把提示词记录与本次改动追加到 dwb_prompt.md。

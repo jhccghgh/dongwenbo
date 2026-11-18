@@ -58,6 +58,25 @@
     display: none;   /* 仅降级模式下显示 */
   }
   .dwb_btn:active { transform: scale(0.96); }
+  /* 底部任务演示视频区块 */
+  .dwb_video {
+    margin-top: 26px;
+    width: 100%;
+    max-width: 380px;
+  }
+  .dwb_video h3 {
+    color: #c9cbdc;
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: normal;
+  }
+  .dwb_video video {
+    width: 100%;
+    display: block;
+    border-radius: 12px;
+    background: #000;
+  }
 </style>
 </head>
 <body>
@@ -70,6 +89,12 @@
     <div class="dwb_desc" id="dwb_desc">摇一摇手机即可随机抽取一道菜</div>
   </div>
   <button class="dwb_btn" id="dwb_btn" type="button">点我抽一次</button>
+
+  <!-- 底部任务演示视频 -->
+  <div class="dwb_video">
+    <h3>任务演示视频</h3>
+    <video src="任务4.mp4" controls playsinline preload="metadata"></video>
+  </div>
 
   <script>
     /* 数据：候选菜谱池 */

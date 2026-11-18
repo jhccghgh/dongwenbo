@@ -54,6 +54,25 @@
     font-size: 13px;
     margin-top: 10px;
   }
+  /* 底部任务演示视频区块 */
+  .dwb_video {
+    margin-top: 24px;
+    width: 100%;
+    max-width: 380px;
+  }
+  .dwb_video h3 {
+    color: #cfd0dc;
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: normal;
+  }
+  .dwb_video video {
+    width: 100%;
+    display: block;
+    border-radius: 12px;
+    background: #000;
+  }
 </style>
 </head>
 <body>
@@ -63,6 +82,12 @@
   </div>
   <div class="dwb_ratio" id="dwb_ratio">1.0x</div>
   <div class="dwb_hint">双指捏合缩放 · 单指拖动 · 双击 1x/2x 切换</div>
+
+  <!-- 底部任务演示视频 -->
+  <div class="dwb_video">
+    <h3>任务演示视频</h3>
+    <video src="任务3.mp4" controls playsinline preload="metadata"></video>
+  </div>
 
   <script>
     /* ============ 状态变量（全部以 dwb_ 开头） ============ */
