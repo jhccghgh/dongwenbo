@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<!-- 作者：董文博 | 学号：24002120307 | 建立时间：2026-11-18 | 使用大模型：GLM-5.3-Flash | 功能：移动端双指缩放图片查看器 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>移动端图片缩放查看器</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", sans-serif;
+    background: #17171f;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 12px;
+  }
+  .dwb_notice {
+    color: #ffb347;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+  .dwb_ratio {
+    color: #cfd0dc;
+    font-size: 15px;
+    margin-top: 12px;
+    letter-spacing: 1px;
+  }
+  /* 图片容器：锁死手势行为，横竖都由自己的 JS 接管，页面本身不滚动 */
+  .dwb_viewer {
+    width: 100%;
+    max-width: 380px;
+    height: 300px;
+    overflow: hidden;        /* 超出容器的图片部分裁掉，形成"取景框" */
+    touch-action: none;      /* 禁用浏览器默认手势（双击缩放页面/拖动），全部交给 JS */
+    user-select: none;       /* 防止长按选中图片 */
+    border-radius: 14px;
+    background: #000;
+    position: relative;
+  }
+  /* 图片：铺满容器作为 1 倍基准；缩放期间关闭过渡，双击/回弹时才打开 */
+  .dwb_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    will-change: transform;
+    transform: translate(0px, 0px) scale(1);
+  }
+  .dwb_img.dwb_smooth { transition: transform 0.25s ease; }
+  .dwb_hint {
+    color: #8a8ba0;
+    font-size: 13px;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+  <div class="dwb_notice" id="dwb_notice">📱 双指缩放请用手机打开（或 DevTools 设备模式）</div>
+  <div class="dwb_viewer" id="dwb_viewer">
+    <img class="dwb_img" id="dwb_img" src="swiper-imgs/aida_1.jpg" alt="爱达·魔都号">
+  </div>
+  <div class="dwb_ratio" id="dwb_ratio">1.0x</div>
+  <div class="dwb_hint">双指捏合缩放 · 单指拖动 · 双击 1x/2x 切换</div>
+
+  <script>
+    /* ============ 状态变量（全部以 dwb_ 开头） ============ */
+    var dwb_viewer = document.getElementById("dwb_viewer");
+    var dwb_img = document.getElementById("dwb_img");
+    var dwb_ratioEl = document.getElementById("dwb_ratio");
+
+    var dwb_scale = 1;          // 当前缩放倍数（1 ~ 4）
+    var dwb_tx = 0, dwb_ty = 0; // 当前平移量（配合 transform-origin:center 的 translate）
+    var dwb_pinch = false;      // 是否正处于双指捏合中
+    var dwb_startDist = 0;      // 双指按下时的初始两指距离
+    var dwb_startScale = 1;     // 双指按下时的初始缩放倍数
+    var dwb_startMid = null;    // 双指按下时的两指中点（缩放基准点）
+    var dwb_startT = null;      // 双指按下时的初始平移量
+    var dwb_lastOne = null;     // 单指上一次位置（用于计算拖动增量）
+    var dwb_lastTapTime = 0;    // 上一次抬手时间（双击判定用）
+    var dwb_lastTapX = 0, dwb_lastTapY = 0;
+
+    /* 函数：把 scale/tx/ty 应用到图片的 transform 上，并刷新倍数显示 */
+    function dwb_apply() {
+      dwb_img.style.transform =
+        "translate(" + dwb_tx + "px, " + dwb_ty + "px) scale(" + dwb_scale + ")";
+      dwb_ratioEl.textContent = dwb_scale.toFixed(1) + "x";
+    }
+
+    /* 函数：把平移量夹回边界内。
+       原理：图片基准尺寸 = 容器尺寸（铺满），origin 在中心，
+       放大 s 倍后四周各多出 (s-1)*宽/2 的可拖动余量，平移量绝对值不能超过它 */
+    function dwb_clamp() {
+      var dwb_maxX = dwb_viewer.clientWidth * (dwb_scale - 1) / 2;
+      var dwb_maxY = dwb_viewer.clientHeight * (dwb_scale - 1) / 2;
+      dwb_tx = Math.max(-dwb_maxX, Math.min(dwb_maxX, dwb_tx));
+      dwb_ty = Math.max(-dwb_maxY, Math.min(dwb_maxY, dwb_ty));
+    }
+
+    /* 函数：两指间距离（勾股定理），用于计算捏合比例 */
+    function dwb_dist(dwb_a, dwb_b) {
+      var dwb_dx = dwb_a.clientX - dwb_b.clientX;
+      var dwb_dy = dwb_a.clientY - dwb_b.clientY;
+      return Math.sqrt(dwb_dx * dwb_dx + dwb_dy * dwb_dy);
+    }
+
+    /* 函数：两指中点坐标，作为缩放基准点 */
+    function dwb_mid(dwb_a, dwb_b) {
+      return {
+        x: (dwb_a.clientX + dwb_b.clientX) / 2,
+        y: (dwb_a.clientY + dwb_b.clientY) / 2
+      };
+    }
+
+    /* ============ touchstart：记录单指 / 双指初始状态 ============ */
+    dwb_viewer.addEventListener("touchstart", function (dwb_e) {
+      if (dwb_e.touches.length === 2) {
+        dwb_pinch = true;
+        dwb_img.classList.remove("dwb_smooth");  // 捏合期间必须跟手，不能有过渡
+        dwb_startDist = dwb_dist(dwb_e.touches[0], dwb_e.touches[1]);
+        dwb_startMid = dwb_mid(dwb_e.touches[0], dwb_e.touches[1]);
+        dwb_startScale = dwb_scale;
+        dwb_startT = { x: dwb_tx, y: dwb_ty };
+      } else if (dwb_e.touches.length === 1) {
+        dwb_lastOne = { x: dwb_e.touches[0].clientX, y: dwb_e.touches[0].clientY };
+      }
+    }, { passive: false });
+
+    /* ============ touchmove：双指按距离比例缩放，单指拖动 ============ */
+    dwb_viewer.addEventListener("touchmove", function (dwb_e) {
+      dwb_e.preventDefault();
+      if (dwb_e.touches.length === 2 && dwb_pinch) {
+        // 新倍数 = 初始倍数 × (当前两指距离 / 初始两指距离)，夹在 1~4 倍
+        var dwb_nowDist = dwb_dist(dwb_e.touches[0], dwb_e.touches[1]);
+        dwb_scale = Math.max(1, Math.min(4, dwb_startScale * dwb_nowDist / dwb_startDist));
+
+        // 两指中点相对按下时的位移量：让图片"跟着手指走"
+        var dwb_nowMid = dwb_mid(dwb_e.touches[0], dwb_e.touches[1]);
+        var dwb_cx = dwb_viewer.clientWidth / 2;
+        var dwb_cy = dwb_viewer.clientHeight / 2;
+
+        // 关键补偿：倍数从 startScale 变到 dwb_scale 时，
+        // 若平移量不补偿，基准点下的画面会飘走。公式推导见答辩说明。
+        dwb_tx = dwb_startT.x + (dwb_nowMid.x - dwb_startMid.x)
+               + (dwb_startScale - dwb_scale) * (dwb_startMid.x - dwb_cx);
+        dwb_ty = dwb_startT.y + (dwb_nowMid.y - dwb_startMid.y)
+               + (dwb_startScale - dwb_scale) * (dwb_startMid.y - dwb_cy);
+
+        dwb_clamp();
+        dwb_apply();
+      } else if (dwb_e.touches.length === 1 && dwb_scale > 1) {
+        // 单指拖动：只在已放大时生效，1 倍时单指不拖（避免和页面操作混淆）
+        var dwb_t = dwb_e.touches[0];
+        dwb_tx += dwb_t.clientX - dwb_lastOne.x;
+        dwb_ty += dwb_t.clientY - dwb_lastOne.y;
+        dwb_lastOne = { x: dwb_t.clientX, y: dwb_t.clientY };
+        dwb_apply();
+      }
+    }, { passive: false });
+
+    /* ============ touchend：收尾（回弹限界 + 双击判定） ============ */
+    dwb_viewer.addEventListener("touchend", function (dwb_e) {
+      if (dwb_pinch && dwb_e.touches.length < 2) {
+        dwb_pinch = false;
+        if (dwb_scale <= 1.01) { dwb_scale = 1; dwb_tx = 0; dwb_ty = 0; } // 缩回 1 倍时整体复位
+        dwb_clamp();
+        dwb_img.classList.add("dwb_smooth");  // 松手回弹带 0.25s 过渡
+        dwb_apply();
+      }
+      // 双击判定：两次抬手间隔 < 300ms 且位移很小，且是单指操作留下的
+      if (dwb_e.touches.length === 0 && dwb_lastOne) {
+        var dwb_now = Date.now();
+        var dwb_r = dwb_img.getBoundingClientRect();
+        var dwb_x = dwb_lastOne.x - dwb_r.left, dwb_y = dwb_lastOne.y - dwb_r.top;
+        if (dwb_now - dwb_lastTapTime < 300 &&
+            Math.abs(dwb_x - dwb_lastTapX) < 30 && Math.abs(dwb_y - dwb_lastTapY) < 30) {
+          dwb_img.classList.remove("dwb_smooth");
+          void dwb_img.offsetWidth;               // 先断开过渡改数值，再加回过渡
+          if (dwb_scale > 1) { dwb_scale = 1; } else { dwb_scale = 2; }
+          dwb_tx = 0; dwb_ty = 0;
+          dwb_clamp();
+          dwb_img.classList.add("dwb_smooth");    // 双击切换带 0.25s 过渡
+          dwb_apply();
+          dwb_lastTapTime = 0;
+        } else {
+          dwb_lastTapTime = dwb_now;
+          dwb_lastTapX = dwb_x; dwb_lastTapY = dwb_y;
+        }
+        dwb_lastOne = null;
+      }
+    });
+
+    dwb_apply();
+  </script>
+</body>
+</html>

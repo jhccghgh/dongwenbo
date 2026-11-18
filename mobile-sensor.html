@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!-- 作者：董文博 | 学号：24002120307 | 建立时间：2026-11-18 | 使用大模型：GLM-5.3-Flash | 功能：摇一摇抽今日菜谱（devicemotion + 点击降级） -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>摇一摇抽菜谱</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", sans-serif;
+    background: linear-gradient(160deg, #2b2f4a, #1a1c2e);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+  .dwb_title { color: #fff; font-size: 24px; font-weight: bold; letter-spacing: 1px; }
+  .dwb_sub { color: #9fa3bd; font-size: 14px; margin-top: 10px; }
+  .dwb_state { color: #ffb347; font-size: 13px; margin-top: 6px; min-height: 18px; }
+  .dwb_result {
+    margin-top: 28px;
+    width: 100%;
+    max-width: 320px;
+    min-height: 160px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #fff;
+    padding: 24px;
+    opacity: 0.45;
+  }
+  .dwb_emoji { font-size: 52px; }
+  .dwb_dish { font-size: 22px; font-weight: bold; }
+  .dwb_desc { font-size: 14px; color: #c9cbdc; text-align: center; line-height: 1.6; }
+  /* 抽中后的弹出动画：从小到大弹出并轻微回弹 */
+  .dwb_result.dwb_pop { animation: dwbPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  @keyframes dwbPop {
+    0%   { transform: scale(0.4); opacity: 0; }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+  .dwb_btn {
+    margin-top: 26px;
+    padding: 12px 36px;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff9966, #ff5e62);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    display: none;   /* 仅降级模式下显示 */
+  }
+  .dwb_btn:active { transform: scale(0.96); }
+</style>
+</head>
+<body>
+  <div class="dwb_title">🍗 摇一摇手机，抽今日菜谱</div>
+  <div class="dwb_sub">使劲摇一摇，看看今天吃什么</div>
+  <div class="dwb_state" id="dwb_state"></div>
+  <div class="dwb_result" id="dwb_result">
+    <div class="dwb_emoji" id="dwb_emoji">🍽️</div>
+    <div class="dwb_dish" id="dwb_dish">等待摇动…</div>
+    <div class="dwb_desc" id="dwb_desc">摇一摇手机即可随机抽取一道菜</div>
+  </div>
+  <button class="dwb_btn" id="dwb_btn" type="button">点我抽一次</button>
+
+  <script>
+    /* 数据：候选菜谱池 */
+    var dwb_dishes = [
+      { name: "红烧肉", emoji: "🍖", desc: "浓油赤酱，肥而不腻，米饭杀手。" },
+      { name: "番茄牛腩", emoji: "🍅", desc: "酸甜开胃，牛腩炖得酥烂入味。" },
+      { name: "麻婆豆腐", emoji: "🌶️", desc: "麻辣鲜香烫，下饭一绝。" },
+      { name: "清蒸鲈鱼", emoji: "🐟", desc: "鲜嫩清淡，豉油葱丝提鲜。" },
+      { name: "可乐鸡翅", emoji: "🍗", desc: "甜咸适口，新手也能做的硬菜。" },
+      { name: "酸辣土豆丝", emoji: "🥔", desc: "爽脆酸辣，简单快手的家常菜。" }
+    ];
+
+    var dwb_stateEl = document.getElementById("dwb_state");
+    var dwb_resultEl = document.getElementById("dwb_result");
+    var dwb_lastFire = 0;      // 上次触发时间戳（冷却用）
+    var dwb_support = false;   // devicemotion 是否可用且有数据
+
+    /* 函数：随机抽一道菜渲染到结果卡片，加弹出动画 */
+    function dwb_draw() {
+      var dwb_dish = dwb_dishes[Math.floor(Math.random() * dwb_dishes.length)];
+      document.getElementById("dwb_emoji").textContent = dwb_dish.emoji;
+      document.getElementById("dwb_dish").textContent = dwb_dish.name;
+      document.getElementById("dwb_desc").textContent = dwb_dish.desc;
+      dwb_resultEl.classList.remove("dwb_pop");
+      void dwb_resultEl.offsetWidth;   // 强制重排，保证动画每次都能重新触发
+      dwb_resultEl.classList.add("dwb_pop");
+      dwb_resultEl.style.opacity = 1;
+    }
+
+    /* 函数：进入降级模式——隐藏摇动引导，显示点击按钮 */
+    function dwb_fallback() {
+      dwb_stateEl.textContent = "当前设备不支持，请用手机打开";
+      document.getElementById("dwb_sub").textContent = "没关系，点下面按钮也能抽";
+      document.getElementById("dwb_btn").style.display = "block";
+    }
+
+    /* 监听设备运动事件：只注册一次，用首帧数据判断支持性 */
+    window.addEventListener("devicemotion", function dwb_onMotion(dwb_e) {
+      var dwb_acc = dwb_e.accelerationIncludingGravity;
+      if (!dwb_acc || (dwb_acc.x === null && dwb_acc.y === null && dwb_acc.z === null)) {
+        if (!dwb_support) dwb_fallback();  // 有事件但拿不到数据，同样降级
+        return;
+      }
+      dwb_support = true;
+      dwb_stateEl.textContent = "传感器就绪，摇起来！";
+
+      // 静止时手机仍受重力，三轴合成值约 9.8，所以要减去基线再判阈值
+      var dwb_total = Math.sqrt(dwb_acc.x * dwb_acc.x + dwb_acc.y * dwb_acc.y + dwb_acc.z * dwb_acc.z);
+      var dwb_now = Date.now();
+      if (Math.abs(dwb_total - 9.8) > 18 && dwb_now - dwb_lastFire > 1500) {
+        dwb_lastFire = dwb_now;   // 1.5 秒冷却：一次摇动的余震不再重复触发
+        dwb_draw();
+      }
+    });
+
+    /* 3.5 秒后仍没收到任何有效数据，判定环境不支持（电脑浏览器/无传感器），降级 */
+    setTimeout(function () {
+      if (!dwb_support && dwb_stateEl.textContent === "") dwb_fallback();
+    }, 3500);
+
+    /* 降级按钮：点击等同摇一摇 */
+    document.getElementById("dwb_btn").addEventListener("click", dwb_draw);
+  </script>
+</body>
+</html>

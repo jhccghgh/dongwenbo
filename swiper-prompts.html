@@ -147,24 +147,25 @@
     <h2>任务三 · 综合创作：爱达·魔都号 + keyboard 键盘控制<small>第六件展品（AI 生成图）+ 超纲能力 keyboard</small></h2>
 
     <div class="wy-turn wy-me">
-      <div class="wy-who">👤 提示词 ①（生成展品图片，横版 16:9）</div>
-      <p>为"大国重器光影展"生成第六件展品配图：国产首艘大型邮轮"爱达·魔都号"在金色黄昏的海面上航行，白色船身、标志性红黄涂装烟囱，侧面全景视角，写实摄影风格，横版 16:9。</p>
+      <div class="wy-who">👤 真实提示词 ①（课后任务书原文，学生发给 AI）</div>
+      <p>两件事:① 为光影展添加第六件展品爱达·魔都号(首艘国产大型邮轮，2024年1月首航)，图片用 AI生成(横版 16:9)slide 结构完整;② 挑一个课堂上没讲过的 Swiper 能力加上去:keyboard 键盘控制 / mousewheel 滚轮/zoom 双击缩放/parallax 视差，任选其一，AI 可用。提交物:能运行的页面+与 Al 的关键对话记录(提示词 +重要往返)。</p>
     </div>
     <div class="wy-turn">
       <div class="wy-who">🤖 产出</div>
-      <p>swiper-imgs/aida_1.jpg（2560×1440，右下角自带"AI生成"水印），slide 结构与其余五件展品一致：img + 标题"爱达·魔都号" + 说明"2024 年 1 月首航 · 国产首艘大型邮轮（图片由 AI 生成）"。</p>
+      <p>AI 选用 keyboard 键盘控制，并调用图像生成产出展品图（生成提示词由 AI 拟定："国产首艘大型邮轮爱达·魔都号在金色黄昏的海面上航行，白色船身、标志性红黄涂装烟囱，侧面全景视角，写实摄影风格，横版 16:9"）。</p>
+      <p>产出：swiper-imgs/aida_1.jpg（2560×1440，右下角自带"AI生成"水印），slide 结构与其余五件展品一致：img + 标题"爱达·魔都号" + 说明"2024 年 1 月首航 · 国产首艘大型邮轮（图片由 AI 生成）"。</p>
     </div>
 
     <div class="wy-turn wy-me">
-      <div class="wy-who">👤 提示词 ②（超纲能力：keyboard 键盘控制）</div>
-      <p>给演示二的轮播加键盘控制：聚焦页面后按键盘 ← / → 方向键就能翻页。请给 Swiper 11 的正确写法并说明参数。</p>
+      <div class="wy-who">👤 真实提示词 ②（答辩追问原文，学生发给 AI）</div>
+      <p>这段代码什么意思?AI第一次给的哪里不对、你改了什么?新参数的作用?现场把 delay 改成指定值并解释预期变化。</p>
     </div>
     <div class="wy-turn">
       <div class="wy-who">🤖 AI 关键回答（节选）</div>
       <pre>keyboard: { enabled: true }
 // 启用 Keyboard 模块：容器获得焦点后，
 // ArrowLeft / ArrowRight 分别调用 slidePrev / slideNext。</pre>
-      <div class="wy-flaw">❌ AI 第一次给出的是顶层布尔写法 keyboard: true —— 在 Swiper 11 中该模块需要对象形式（keyboard: { enabled: true }），布尔写法不生效；追问后 AI 修正并提醒"页面需先获得焦点"。</div>
+      <div class="wy-flaw">❌ AI 第一次给出的是顶层布尔写法 keyboard: true —— 在 Swiper 11 中该模块需要对象形式（keyboard: { enabled: true }），布尔写法不生效；追问后 AI 修正并提醒"页面需先获得焦点"。delay 现场演示：把 autoplay 的 delay 由 3200 改为 1600，自动翻页间隔缩短一半、翻页节奏加快一倍，动画时长 speed 不受影响。</div>
     </div>
 
     <div class="wy-shot">
