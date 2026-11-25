@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<!-- 作者：董文博 | 建立时间：2026-11-25 | 使用大模型：GLM-5.3-Flash | 功能：LLM 实践完成测试展示（在线客服 / RAG 知识库问答 / 图像识别 / 语音识别） -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM 实践完成测试展示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", sans-serif;
+    background: linear-gradient(160deg, #0e1730, #0a1024);
+    min-height: 100vh;
+    color: #e8eaf6;
+    padding: 48px 16px 64px;
+  }
+  .wy_wrap { max-width: 960px; margin: 0 auto; }
+  .wy_head { text-align: center; margin-bottom: 40px; }
+  .wy_head h1 { font-size: 32px; letter-spacing: 2px; }
+  .wy_head p { color: #9fb0d8; font-size: 14px; margin-top: 12px; line-height: 1.8; }
+  .wy_head .wy_tags { margin-top: 14px; }
+  .wy_head .wy_tags span {
+    display: inline-block;
+    margin: 4px 4px;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    color: #b8c6ee;
+    background: rgba(120, 140, 255, 0.12);
+    border: 1px solid rgba(120, 140, 255, 0.3);
+  }
+  /* 每个实践板块卡片 */
+  .wy_case {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 36px;
+  }
+  .wy_case h2 {
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .wy_case h2 .wy_no {
+    font-size: 13px;
+    color: #8fa4e0;
+    background: rgba(120, 140, 255, 0.15);
+    border-radius: 8px;
+    padding: 3px 10px;
+    font-weight: normal;
+  }
+  .wy_meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .wy_meta span {
+    font-size: 13px;
+    color: #b8c6ee;
+    background: rgba(10, 20, 50, 0.6);
+    border: 1px solid rgba(120, 140, 255, 0.25);
+    border-radius: 8px;
+    padding: 6px 12px;
+  }
+  .wy_meta span b { color: #ffffff; font-weight: normal; }
+  .wy_case p.wy_desc { color: #c3cdf0; font-size: 14px; line-height: 1.9; margin-top: 14px; }
+  /* 截图：点击可放大 */
+  .wy_shot {
+    display: block;
+    width: 100%;
+    border-radius: 12px;
+    margin-top: 18px;
+    cursor: zoom-in;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: transform 0.25s ease;
+  }
+  .wy_shot:hover { transform: translateY(-4px); }
+  .wy_foot { text-align: center; margin-top: 20px; }
+  .wy_foot a { color: #8fa4e0; font-size: 14px; text-decoration: none; }
+  .wy_foot a:hover { text-decoration: underline; }
+  /* 点击放大遮罩层 */
+  .wy_mask {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 8, 20, 0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    cursor: zoom-out;
+  }
+  .wy_mask.wy_show { display: flex; }
+  .wy_mask img {
+    max-width: 94vw;
+    max-height: 92vh;
+    border-radius: 10px;
+  }
+</style>
+</head>
+<body>
+  <div class="wy_wrap">
+    <header class="wy_head">
+      <h1>LLM 实践完成测试展示</h1>
+      <p>四个大模型能力实践模块均已完成联调与真机测试：对话客服、知识库问答（RAG）、图像理解、语音识别。<br>以下为各模块的实测截图，点击截图可放大查看。</p>
+      <div class="wy_tags">
+        <span>硅基流动 SiliconFlow</span><span>Qwen2.5-7B</span><span>Qwen3-VL</span><span>Qwen-Audio-ASR</span><span>RAG 检索增强</span>
+      </div>
+    </header>
+
+    <!-- 板块一：在线客服 -->
+    <section class="wy_case">
+      <h2><span class="wy_no">测试 01</span>中华美食街 · 在线客服</h2>
+      <div class="wy_meta">
+        <span>后端接口：<b>POST /api/chat</b></span>
+        <span>模型：<b>硅基流动 Qwen2.5-7B</b></span>
+        <span>交互：<b>Enter 发送 / 流式问答</b></span>
+      </div>
+      <p class="wy_desc">测试要点：客服开场自我介绍（解答营业时间、招牌菜、配送范围三类问题），发送"你好"后模型按系统设定的人设正常回复，说明对话接口与提示词约束均生效。</p>
+      <img class="wy_shot" src="llm-imgs/wy_chat.png" alt="在线客服测试截图">
+    </section>
+
+    <!-- 板块二：RAG 知识库问答 -->
+    <section class="wy_case">
+      <h2><span class="wy_no">测试 02</span>知识库问答（RAG 检索增强）</h2>
+      <div class="wy_meta">
+        <span>后端接口：<b>POST /api/chat（带知识库）</b></span>
+        <span>上传文档：<b>海外仓相关信息.docx 等</b></span>
+        <span>关键能力：<b>命中知识碎片溯源</b></span>
+      </div>
+      <p class="wy_desc">测试要点：上传业务文档建立知识库后提问"海外仓相关信息"，模型回答基于文档内容；页面下方展示本次回答命中的知识碎片明细（来源文件、相似度得分 #12/#8/#10），验证检索增强链路完整。</p>
+      <img class="wy_shot" src="llm-imgs/wy_rag.png" alt="RAG 知识库问答测试截图">
+    </section>
+
+    <!-- 板块三：智能图像识别 -->
+    <section class="wy_case">
+      <h2><span class="wy_no">测试 03</span>智能图像识别</h2>
+      <div class="wy_meta">
+        <span>后端接口：<b>POST /api/vision</b></span>
+        <span>模型：<b>Qwen/Qwen3-VL-88-Instruct</b></span>
+        <span>限制：<b>jpg/png/webp/gif，≤5MB</b></span>
+      </div>
+      <p class="wy_desc">测试要点：上传《信风影集》电影剧照后点击"开始识别"，模型返回对画面主体、光影、色彩与氛围的完整中文描述，验证多模态视觉理解接口联通正常。</p>
+      <img class="wy_shot" src="llm-imgs/wy_vision.png" alt="智能图像识别测试截图">
+    </section>
+
+    <!-- 板块四：智能语音识别 -->
+    <section class="wy_case">
+      <h2><span class="wy_no">测试 04</span>智能语音识别（ASR）</h2>
+      <div class="wy_meta">
+        <span>后端接口：<b>POST /api/asr</b></span>
+        <span>模型：<b>qwen-audio-3.0-asr-flash</b></span>
+        <span>方式：<b>浏览器录音 / 上传音频文件</b></span>
+      </div>
+      <p class="wy_desc">测试要点：浏览器录音 12 秒自动停止并转 WAV 上传（也可上传 wav/mp3/m4a/webm/ogg 文件，≤10MB）；本条 13 秒语音成功转写为文字结果，验证录音、上传两条链路与转写接口均可用。</p>
+      <img class="wy_shot" src="llm-imgs/wy_asr.png" alt="智能语音识别测试截图">
+    </section>
+
+    <footer class="wy_foot">
+      <a href="index.html">← 返回首页</a>
+    </footer>
+  </div>
+
+  <!-- 点击放大的遮罩层 -->
+  <div class="wy_mask" id="wy_mask">
+    <img id="wy_maskImg" src="" alt="放大查看">
+  </div>
+
+  <script>
+    // 函数：实现截图点击放大 / 再次点击关闭的灯箱效果
+    // 给所有截图绑定点击：把当前截图地址放进遮罩层并显示；点击遮罩任意位置关闭
+    (function () {
+      var wy_mask = document.getElementById("wy_mask");
+      var wy_maskImg = document.getElementById("wy_maskImg");
+      var wy_shots = document.querySelectorAll(".wy_shot");
+      wy_shots.forEach(function (wy_img) {
+        wy_img.addEventListener("click", function () {
+          wy_maskImg.src = wy_img.src;
+          wy_mask.classList.add("wy_show");
+        });
+      });
+      wy_mask.addEventListener("click", function () {
+        wy_mask.classList.remove("wy_show");
+        wy_maskImg.src = "";
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -235,3 +235,9 @@
 提示词：把任务3.MP4加入到mobile-zoom.html底部，任务4.MP4加入到mobile-sensor.html底部。
 
 执行说明：在 mobile-zoom.html 与 mobile-sensor.html 页面底部各加一个视频区块（video 标签，controls 控件，居中排版，dwb_ 前缀），分别引用根目录的 任务3.mp4、任务4.mp4，并把提示词记录与本次改动追加到 dwb_prompt.md。
+
+## 2026-11-25 10:30:00 | GLM-5.3-Flash
+
+提示词：在index.html中加入新的网页来展示LLM实践完成测试展示（附4张测试截图：在线客服、RAG知识库问答、智能图像识别、智能语音识别）。
+
+执行说明：复制4张截图到 llm-imgs/（wy_chat/wy_rag/wy_vision/wy_asr.png）；新建 llm-showcase.html 展示四个 LLM 实践板块（接口、模型、测试结果说明，wy_ 前缀，含点击放大查看）；两个首页目录同步登记（编号 23，占位卡顺延 24）。
